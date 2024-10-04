@@ -1,6 +1,7 @@
 
 import Input from './components/Input';
 import Button from './components/Button';
+import DisplayDiv from './components/DisplayDiv'
 
 import { Container, Content, Row } from './styles';
 import { useState } from 'react';
@@ -10,6 +11,7 @@ const App = () => {
   const [currentNumber, setCurrentNumber] = useState('0');
   const [firstNumber, setFirstNumber] = useState('0');
   const [operation, setOperation] = useState('');
+  const [operationDisplay, setOperationDisplay] = useState('');
 
   const handleOnClear = () => {
     setCurrentNumber('0')
@@ -49,8 +51,36 @@ const App = () => {
 
   }
 
-  const handleEquals = () => {
+  const handleMultiplyNumbers = () => {
 
+    if(firstNumber === '0'){
+      setFirstNumber(String(currentNumber));
+      setCurrentNumber('0')
+      setOperation('*')
+    }else {
+      const product = Number(firstNumber) * Number(currentNumber);
+      setCurrentNumber(String(product))
+      setOperation('*')
+    }
+
+  }
+
+  const handleDivideNumbers = () => {
+
+    if(firstNumber === '0'){
+      setFirstNumber(String(currentNumber));
+      setCurrentNumber('0')
+      setOperation('/')
+    }else {
+      const product = Number(firstNumber) / Number(currentNumber);
+      setCurrentNumber(String(product))
+      setOperation('/')
+    }
+
+  }
+
+  const handleEquals = () => {
+    setFirstNumber('0')
     if(firstNumber !== '0' && operation !== '' && currentNumber !== '0'){
         switch(operation){
           case '+':
@@ -59,6 +89,12 @@ const App = () => {
           case '-':
             handleMinusNumbers();
             break;
+          case '*':
+            handleMultiplyNumbers();
+            break;
+          case '/':
+            handleDivideNumbers();
+            break;
           default: 
             break;
         }
@@ -66,15 +102,24 @@ const App = () => {
 
   }
 
+  const handleOpDisplay = (firstNum, op, curNum) => {
+    let arg = `${firstNum} ${op} ${curNum} `
+
+    setOperationDisplay(arg);
+  }
+
   return (
     <Container>
       <Content>
-        <Input value={currentNumber}/>
         <Row>
-          <Button label="x"/>
-          <Button label="/"/>
+          <Input value={currentNumber} onChange={() => handleOpDisplay(firstNumber, operation, currentNumber)} />
+          <DisplayDiv label={operationDisplay} />
+        </Row>
+        <Row>
+          <Button label="x" onClick={handleMultiplyNumbers}/>
+          <Button label="/" onClick={handleDivideNumbers}/>
           <Button label="c" onClick={handleOnClear}/>
-          <Button label="."/>
+          <Button label="." onClick={() => handleAddNumber('.')}/>
         </Row>
         <Row>
           <Button label="7" onClick={() => handleAddNumber('7')}/>
@@ -93,6 +138,12 @@ const App = () => {
           <Button label="2" onClick={() => handleAddNumber('2')}/>
           <Button label="3" onClick={() => handleAddNumber('3')}/>
           <Button label="=" onClick={handleEquals}/>
+        </Row>
+        <Row>
+          <Button label="--" disabled/>
+          <Button label="0" onClick={() => handleAddNumber('0')}/>
+          <Button label="--" disabled/>
+          <Button label="--" disabled/>
         </Row>
       </Content>
     </Container>
